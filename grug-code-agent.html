@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrugCode - LLM Coding Agent for Grug Brained Developer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --bg: #1a1a0e;
+    --bg-lighter: #2a2a1a;
+    --text: #d4c9a8;
+    --text-dim: #8a8060;
+    --accent: #c4873b;
+    --accent-glow: #e6a040;
+    --danger: #a03030;
+    --crystal: #5ab8a0;
+    --crystal-glow: #7aeac8;
+    --club: #8b6914;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 19px;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 80%, #2a200a 0%, var(--bg) 70%);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-conic-gradient(from 0deg, transparent 0deg 8deg, rgba(196, 135, 59, 0.015) 8deg 10deg);
+    animation: slowspin 120s linear infinite;
+  }
+
+  @keyframes slowspin { to { transform: rotate(360deg); } }
+
+  .club-icon {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 20px rgba(196, 135, 59, 0.4));
+    animation: clubpulse 3s ease-in-out infinite;
+  }
+
+  @keyframes clubpulse {
+    0%, 100% { transform: rotate(-5deg) scale(1); }
+    50% { transform: rotate(5deg) scale(1.05); }
+  }
+
+  h1 {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    color: var(--accent);
+    text-shadow: 0 0 40px rgba(196, 135, 59, 0.3);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 span {
+    color: var(--crystal);
+    text-shadow: 0 0 30px rgba(90, 184, 160, 0.3);
+  }
+
+  .subtitle {
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    color: var(--text-dim);
+    font-style: italic;
+    max-width: 700px;
+    margin-bottom: 2.5rem;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: inherit;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(196, 135, 59, 0.3);
+  }
+
+  .cta-btn:hover {
+    background: var(--accent-glow);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(196, 135, 59, 0.5);
+  }
+
+  .cta-sub {
+    display: block;
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* SECTIONS */
+  section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  h2 {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+  }
+
+  h2::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent), transparent);
+  }
+
+  p { margin-bottom: 1.2rem; }
+
+  .highlight {
+    color: var(--accent-glow);
+    font-weight: 700;
+  }
+
+  .crystal-text {
+    color: var(--crystal);
+    font-weight: 700;
+  }
+
+  .danger-text {
+    color: var(--danger);
+    font-weight: 700;
+    font-style: italic;
+  }
+
+  /* DIVIDER */
+  .divider {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 1.5rem;
+    letter-spacing: 1rem;
+    opacity: 0.3;
+  }
+
+  /* FEATURE GRID */
+  .features {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .feature-card {
+    background: var(--bg-lighter);
+    border: 1px solid rgba(196, 135, 59, 0.15);
+    border-radius: 8px;
+    padding: 2rem;
+    transition: all 0.3s;
+  }
+
+  .feature-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .feature-card .icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card h3 {
+    color: var(--accent);
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .feature-card p {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+
+  /* COMPARISON TABLE */
+  .comparison {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    font-size: 1rem;
+  }
+
+  th {
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 2px solid var(--accent);
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+
+  td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(196, 135, 59, 0.1);
+    vertical-align: top;
+  }
+
+  tr:hover td { background: rgba(196, 135, 59, 0.05); }
+
+  .col-bad { color: var(--danger); }
+  .col-good { color: var(--crystal); }
+
+  /* CODE BLOCK */
+  .code-example {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  pre {
+    background: #0d0d08;
+    border: 1px solid rgba(196, 135, 59, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin-top: 1.5rem;
+  }
+
+  pre .comment { color: #6a6a4a; font-style: italic; }
+  pre .keyword { color: var(--accent); }
+  pre .string { color: var(--crystal); }
+  pre .fn { color: #c9a0dc; }
+
+  /* TESTIMONIALS */
+  .testimonials {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .testimonial {
+    background: var(--bg-lighter);
+    border-left: 3px solid var(--accent);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+  }
+
+  .testimonial .author {
+    display: block;
+    margin-top: 0.8rem;
+    font-style: normal;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  /* PRICING */
+  .pricing {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .pricing-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .price-card {
+    background: var(--bg-lighter);
+    border: 1px solid rgba(196, 135, 59, 0.15);
+    border-radius: 8px;
+    padding: 2.5rem 2rem;
+    transition: all 0.3s;
+  }
+
+  .price-card.featured {
+    border-color: var(--crystal);
+    box-shadow: 0 0 30px rgba(90, 184, 160, 0.15);
+    position: relative;
+  }
+
+  .price-card.featured::before {
+    content: 'most grug';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--crystal);
+    color: var(--bg);
+    padding: 2px 16px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .price-card h3 {
+    color: var(--accent);
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .price-card .price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+
+  .price-card .price-unit {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .price-card ul {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-card li {
+    padding: 0.4rem 0;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+  }
+
+  .price-card li::before {
+    content: '🪨 ';
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(196, 135, 59, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  footer p { margin-bottom: 0.5rem; }
+
+  /* DEMON ANIMATION */
+  @keyframes demonflicker {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; text-shadow: 0 0 10px rgba(160, 48, 48, 0.5); }
+  }
+
+  .demon-flicker {
+    animation: demonflicker 4s ease-in-out infinite;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    section, .features, .comparison, .code-example, .testimonials, .pricing {
+      padding: 3rem 1.2rem;
+    }
+    .feature-grid, .pricing-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="club-icon">🪵</div>
+  <h1>Grug<span>Code</span></h1>
+  <p class="subtitle">llm coding agent for grug brained developer. not smart, but know what work. club complexity demon so you no have to.</p>
+  <a href="#" class="cta-btn">give grug codebase</a>
+  <span class="cta-sub">free to try. no shiney rock required. grug promise.</span>
+</div>
+
+<!-- INTRO -->
+<section>
+  <h2>what is grugcode</h2>
+  <p>
+    grug know you. you <span class="highlight">tired</span>. you have mass of code in repo.
+    you have framework on top of framework. abstraction on top of abstraction.
+    you look at codebase and see <span class="danger-text demon-flicker">complexity demon spirit</span> laughing at you from every file.
+  </p>
+  <p>
+    other coding agents? they <span class="highlight">big brain</span>. they generate 47 files, 12 abstract factory
+    visitor pattern bridge adapter proxy singletons, and type system so complex even type system
+    not understand type system.
+  </p>
+  <p>
+    grugcode different. grugcode <span class="crystal-text">smol brain on purpose</span>.
+    grugcode write code like grug write code: simple, obvious, work.
+    when complexity demon try sneak in, grugcode reach for club. 🪵
+  </p>
+</section>
+
+<div class="divider">· · ·</div>
+
+<!-- THE ENEMY -->
+<section>
+  <h2>the eternal enemy</h2>
+  <p>
+    grug have many thing to say on many topic but <span class="highlight">most important thing grug say is</span>:
+  </p>
+  <p style="font-size: 1.8rem; text-align: center; padding: 1rem 0; color: var(--danger);">
+    complexity very, very bad
+  </p>
+  <p>
+    other coding agents no understand this. other coding agents <em>are</em> complexity demon.
+    they look at 10 line function and say "ah yes, let grug refactor this into 6 microservices
+    with event sourcing and CQRS and kubernetes manifest." no. <span class="highlight">no!</span>
+  </p>
+  <p>
+    given choice between mass framework abstraction generated by big brain agent
+    and one on one against t-rex, grug take t-rex every time.
+    at least t-rex honest about trying to eat you.
+  </p>
+  <p>
+    grugcode know the magic word. the magic word is <span class="crystal-text">"no"</span>.
+    grugcode say no to unnecessary complexity. grugcode say no to premature abstraction.
+    grugcode say no to complexity demon, and reach for club.
+  </p>
+</section>
+
+<div class="divider">· · ·</div>
+
+<!-- FEATURES -->
+<div class="features">
+  <h2>what grugcode do</h2>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="icon">🪵</div>
+      <h3>club complexity demon</h3>
+      <p>grugcode look at code and find where complexity demon hiding. then club. hard. simplify function, flatten abstraction, remove indirection that serve no purpose. demon go back to shadow realm where belong.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">🪨</div>
+      <h3>80/20 solution</h3>
+      <p>grugcode give 80% of feature with 20% of code. you may not like. you may say "but what about edge case where user on mars during leap second?" grug say: is fine! ship now, handle mars later. or never. probably never.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">🔥</div>
+      <h3>code you can read</h3>
+      <p>when grug look at thing, grug know what thing do. no need trace through 14 files and 7 levels of inheritance to understand what happen when button click. locality of behavior. is good. is grug way.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">🦴</div>
+      <h3>right test at right time</h3>
+      <p>grugcode not write million unit test that break when implementation change. grugcode write integration test at sweet spot: high level enough to catch real bug, low enough to debug. peak grug testing. you may not like.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">🪵</div>
+      <h3>log good</h3>
+      <p>grugcode believe in logging. is most underrated tool in all of software. log major branch in code. include request id. if rob pike spend mass time on logging at mass google, maybe you should too.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">🏔️</div>
+      <h3>no premature abstract</h3>
+      <p>grugcode not extract interface after seeing pattern once. grugcode wait. watch. let cut point emerge from code like dinosaur bone emerge from rock. then, only then, grug refactor. patience, young grug.</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- COMPARISON -->
+<div class="comparison">
+  <h2>grugcode vs big brain agent</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>situation</th>
+        <th class="col-bad">big brain agent</th>
+        <th class="col-good">grugcode</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>you say "add login"</td>
+        <td class="col-bad">generate OAuth2 PKCE flow with JWT rotation, refresh token microservice, Redis session store, 47 files</td>
+        <td class="col-good">add login form. check password. set cookie. done. is fine!</td>
+      </tr>
+      <tr>
+        <td>you say "make faster"</td>
+        <td class="col-bad">introduce Kafka event stream with CQRS read model and cache invalidation strategy document</td>
+        <td class="col-good">add index to database query that was doing full table scan. go from 3000ms to 4ms. go home early. eat dinosaur meat.</td>
+      </tr>
+      <tr>
+        <td>you say "refactor this"</td>
+        <td class="col-bad">AbstractFactoryVisitorBridgeProxyStrategyObserverMediatorDecoratorAdapter.java</td>
+        <td class="col-good">rename variable. extract one function. delete dead code. codebase 30% smaller. complexity demon scream in pain. good.</td>
+      </tr>
+      <tr>
+        <td>you say "add feature"</td>
+        <td class="col-bad">"first let restructure entire application to support plugin architecture for future extensibility"</td>
+        <td class="col-good">add feature. in one file. where it belong. if need plugin architecture later, do then. probably never need.</td>
+      </tr>
+      <tr>
+        <td>you say "fix bug"</td>
+        <td class="col-bad">rewrite entire module using functional reactive programming paradigm</td>
+        <td class="col-good">read log. find bug. fix bug. add test so bug no come back. club bug. go home.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- CODE EXAMPLE -->
+<div class="code-example">
+  <h2>grugcode in action</h2>
+  <p>you tell grugcode: "help grug send email when user sign up"</p>
+  <p>big brain agent generate event bus, message queue, retry policy, dead letter queue, observability layer. grugcode generate:</p>
+
+  <pre><code><span class="comment"># is fine. send email. go home. eat dinosaur meat.</span>
+
+<span class="keyword">def</span> <span class="fn">handle_signup</span>(email, password):
+    user = <span class="fn">create_user</span>(email, password)  <span class="comment"># make user</span>
+    <span class="fn">send_email</span>(                          <span class="comment"># send email</span>
+        to=email,
+        subject=<span class="string">"welcome to cave"</span>,
+        body=<span class="string">"you in now. go make thing."</span>
+    )
+    <span class="fn">log</span>(<span class="string">f"new grug: <span style="color:var(--text)">{email}</span>"</span>)       <span class="comment"># log good</span>
+    <span class="keyword">return</span> user
+
+<span class="comment"># no event bus. no message queue. no dead letter.</span>
+<span class="comment"># email fail? check log. send again. is fine.</span>
+<span class="comment"># complexity demon cry. good.</span></code></pre>
+
+  <p style="margin-top: 1.5rem;">
+    you see? <span class="crystal-text">you look at thing. you know what thing do.</span>
+    this not accident. this is art of grug.
+  </p>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- TESTIMONIALS -->
+<div class="testimonials">
+  <h2>what grug say</h2>
+
+  <div class="testimonial">
+    "grug use other coding agent for two week. codebase grow 400%. nobody understand anything. abstract factory talk to abstract factory through abstract factory. switch to grugcode. codebase shrink 60%. grug see code again. grug cry happy tear."
+    <span class="author">— grug at startup that now ship</span>
+  </div>
+
+  <div class="testimonial">
+    "grug ask grugcode help with legacy Java codebase. first thing grugcode say: 'who write this. why 14 layer of abstraction for print hello.' grug laugh so hard fall off rock. then grugcode club 9 layer away. code still work. better actually."
+    <span class="author">— grug who escape enterprise</span>
+  </div>
+
+  <div class="testimonial">
+    "complexity demon have full control of codebase. team afraid. every change break three other thing. grugcode come in, club demon, trap in crystal. team ship first feature in 6 month. grug give grugcode extra shiney rock for this."
+    <span class="author">— senior grug who know fear</span>
+  </div>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- PRICING -->
+<div class="pricing">
+  <h2>shiney rock pricing</h2>
+  <p>grug believe in simple pricing. not 47 tier with enterprise "call us" button. complexity demon love confusing pricing page. grug not let demon win here too.</p>
+
+  <div class="pricing-cards">
+    <div class="price-card">
+      <h3>young grug</h3>
+      <div class="price">free</div>
+      <span class="price-unit">zero shiney rock per moon cycle</span>
+      <ul>
+        <li>club small complexity demon</li>
+        <li>50 grug action per day</li>
+        <li>basic logging (grug approve)</li>
+        <li>community cave support</li>
+      </ul>
+      <a href="#" class="cta-btn" style="font-size: 1rem; padding: 0.7rem 1.5rem;">start clubbing</a>
+    </div>
+
+    <div class="price-card featured">
+      <h3>wise grug</h3>
+      <div class="price">20</div>
+      <span class="price-unit">shiney rock per moon cycle</span>
+      <ul>
+        <li>club ALL complexity demon</li>
+        <li>unlimited grug action</li>
+        <li>full codebase analysis</li>
+        <li>crystal trapping included</li>
+        <li>priority cave support</li>
+      </ul>
+      <a href="#" class="cta-btn" style="font-size: 1rem; padding: 0.7rem 1.5rem;">get wise</a>
+    </div>
+
+    <div class="price-card">
+      <h3>elder grug</h3>
+      <div class="price">??</div>
+      <span class="price-unit">talk to grug. grug reasonable.</span>
+      <ul>
+        <li>everything in wise grug</li>
+        <li>grug come to your cave</li>
+        <li>custom club forging</li>
+        <li>complexity demon exorcism</li>
+        <li>shiney rock back if demon win</li>
+      </ul>
+      <a href="#" class="cta-btn" style="font-size: 1rem; padding: 0.7rem 1.5rem;">summon elder</a>
+    </div>
+  </div>
+</div>
+
+<div class="divider">· · ·</div>
+
+<!-- PHILOSOPHY -->
+<section>
+  <h2>the grug philosophy</h2>
+  <p>
+    grug not say grugcode perfect. no silver club fix all software problem. such is life.
+  </p>
+  <p>
+    but grug say this: after many many year of mass mass programming, grug learn one thing:
+  </p>
+  <p style="font-size: 1.5rem; text-align: center; padding: 1rem 0;">
+    <span class="crystal-text">simplicity is not stupid. simplicity is hard. simplicity is the goal.</span>
+  </p>
+  <p>
+    grugcode help you get there. one club swing at a time. 🪵
+  </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p style="font-size: 1.5rem; margin-bottom: 1rem;">🪵</p>
+  <p>grugcode. club complexity. ship thing. go home. eat dinosaur meat.</p>
+  <p style="margin-top: 1rem; font-size: 0.8rem;">
+    inspired by <a href="https://grugbrain.dev" style="color: var(--accent);">the grug brained developer</a>.
+    grug hope original grug not club grug for this.
+  </p>
+  <p style="margin-top: 0.5rem; font-size: 0.75rem; opacity: 0.5;">
+    © year of dinosaur. all rock reserved. complexity demon have no rights.
+  </p>
+</footer>
+
+</body>
+</html>
